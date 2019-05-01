@@ -38,7 +38,7 @@ app.post('/quotes', async (req,res)=>{
       });
       res.json(quote).status(201);
     } else { 
-      res.status(400).json({message:err.message})
+      res.status(500).json({message:err.message})
     }
   } catch(err){
       // res.status(500) 
@@ -46,6 +46,23 @@ app.post('/quotes', async (req,res)=>{
   }
 });
 //Send a PUT request to quotes/:id UPDATE(edit) a quote
+app.put('/quotes:id', async (req,res)=>{
+  try{
+    const quote = await records.getQuote(req.params.id);
+    if(quote){
+      quote.quote = req.body.quote;
+      quote.author = req.body.author;
+
+      await records.updateQuote(quote);
+      res.status(204).end();
+    }else{
+      res.status(404).json({message:'quote not found'});
+    }
+  }catch(err){
+    res.status(500).json({message:err.message});
+  }
+
+})
 //Send a DELETE request quotes/:id to DELETE a quote
 //Send a GET request to quotes/quote/random READ a random quote
 
